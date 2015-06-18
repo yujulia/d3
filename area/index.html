@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Area Chart</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+        body {
+            font:  16px/1.4 Helvetica, Arial;
+            color: #666;
+        }
+
+        .d3-tip {
+          line-height: 1;
+          font-weight: normal;
+          padding: 7px 12px;
+          background: #01a0b6;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          border-radius: 5px;
+          z-index: 100;
+          font-size: 12px;
+          line-height: 1.2em;
+          max-width: 200px;
+        }
+
+        .d3-tip:after {
+          box-sizing: border-box;
+          display: inline;
+          font-size: 10px;
+          width: 100%;
+          line-height: 1;
+          color: #01a0b6;
+          color: rgba(0, 0, 0, 0.8);
+          content: "\25BC";
+          position: absolute;
+          text-align: center;
+          margin-top: -3px;
+        }
+
+        /* Style northward tooltips differently */
+        .d3-tip.n:after {
+          margin: -3px 0 0 0;
+          top: 100%;
+          left: 0;
+        }
+
+        article {
+            width: 320px;
+            margin: 40px auto;
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: normal;
+            margin: 0 0 20px 0;
+            padding: 0;
+        }
+
+        .chart {
+          font-size: 12px;
+          margin: 0px;
+        }
+        .chart .chart {
+          width: 310px;
+        }
+        .chart .areaCurrent {
+          fill-opacity: 0.6;
+          fill: #eebfb8;
+        }
+        .chart .caplineCurrent {
+          fill: none;
+          stroke-width: 2;
+          stroke: #e37c6d;
+        }
+        .chart .areaRenew {
+          fill-opacity: 0.6;
+          fill: #bdedf4;
+        }
+        .chart .caplineRenew {
+          fill: none;
+          stroke-width: 2;
+          stroke: #bdedf4;
+        }
+        .chart .pointCurrent {
+          stroke-width: 1;
+          stroke: white;
+          fill: #d73514;
+        }
+        .chart .pointCurrent:hover {
+          fill: orange;
+        }
+        .chart .pointRenew {
+          stroke-width: 1;
+          stroke: white;
+          fill: #59eaff;
+        }
+        .chart .pointRenew:hover {
+          fill: #bdedf4;
+        }
+        .chart .axis {
+          fill: #666666;
+          stroke: none;
+        }
+        .chart .axis path, .chart .axis line {
+          stroke: #cccccc;
+          stroke-width: 1;
+          fill: none;
+        }
+
+        .subscriber-tip {
+          background: #d73518;
+        }
+
+        .subscriber-tip:after {
+          color: #d73518;
+        }
+
+        .renew-tip {
+          background: #59eaff;
+        }
+
+        .renew-tip:after {
+          color: #59eaff;
+        }
+
+    </style>
+  </head>
+  <body> 
+
+    <article>
+        <h1>2 Month Overlay Area Chart</h1>
+        <div class="chart">
+            <svg id="area-chart"></svg>
+        </div>
+    </article>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js"></script>
+    <script src="area.js"></script>
+    <script>
+
+    D3Sample.DATA1 = [
+      ['2015-05-20', '2', "show"],            
+      ['2015-05-21', '3', "show"],            
+      ['2015-05-22', '5', "show"],            
+      ['2015-05-23', '19', "show"],            
+      ['2015-05-24', '15', "show"],            
+      ['2015-05-25', '12', "show"],            
+      ['2015-05-26', '10', "show"],            
+      ['2015-05-27', '4', "show"],            
+      ['2015-05-28', '3', "show"],            
+      ['2015-05-29', '4', "show"],            
+      ['2015-05-30', '5', "show"],            
+      ['2015-05-31', '8', "show"],            
+      ['2015-06-01', '2', "show"],            
+      ['2015-06-02', '1', "show"],            
+      ['2015-06-03', '0', "show"],            
+      ['2015-06-04', '0', "show"],            
+      ['2015-06-05', '5', "show"],            
+      ['2015-06-06', '20', "show"],            
+      ['2015-06-07', '24', "show"],            
+      ['2015-06-08', '20', "show"],            
+      ['2015-06-09', '19', "show"],            
+      ['2015-06-10', '12', "show"],            
+      ['2015-06-11', '10', "show"],            
+      ['2015-06-12', '2', "show"],            
+      ['2015-06-13', '4', "show"],            
+      ['2015-06-14', '5', "show"],            
+      ['2015-06-15', '6', "show"],            
+      ['2015-06-16', '9', "show"],            
+      ['2015-06-17', '22', "show"],            
+      ['2015-06-18', '20', "show"]        
+    ];
+
+    D3Sample.DATA2 = [
+      ['2015-05-20', '0', "show"],            
+      ['2015-05-21', '1', "show"],            
+      ['2015-05-22', '2', "show"],            
+      ['2015-05-23', '3', "show"],            
+      ['2015-05-24', '4', "show"],            
+      ['2015-05-25', '5', "show"],            
+      ['2015-05-26', '6', "show"],            
+      ['2015-05-27', '7', "show"],            
+      ['2015-05-28', '8', "show"],            
+      ['2015-05-29', '9', "show"],            
+      ['2015-05-30', '10', "show"],            
+      ['2015-05-31', '10', "show"],            
+      ['2015-06-01', '10', "show"],            
+      ['2015-06-02', '11', "show"],            
+      ['2015-06-03', '12', "show"],            
+      ['2015-06-04', '13', "show"],            
+      ['2015-06-05', '12', "show"],            
+      ['2015-06-06', '10', "show"],            
+      ['2015-06-07', '10', "show"],            
+      ['2015-06-08', '9', "show"],            
+      ['2015-06-09', '8', "show"],            
+      ['2015-06-10', '6', "show"],            
+      ['2015-06-11', '3', "show"],            
+      ['2015-06-12', '2', "show"],            
+      ['2015-06-13', '0', "show"],            
+      ['2015-06-14', '2', "show"],            
+      ['2015-06-15', '4', "show"],            
+      ['2015-06-16', '5', "show"],            
+      ['2015-06-17', '20', "show"],            
+      ['2015-06-18', '23', "show"]        
+    ];
+
+
+    </script>
+  </body>
+</html>

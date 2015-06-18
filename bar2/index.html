@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Bar Chart</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+        body {
+            font:  16px/1.4 Helvetica, Arial;
+            color: #666;
+        }
+
+        .d3-tip {
+          line-height: 1;
+          font-weight: normal;
+          padding: 7px 12px;
+          background: #01a0b6;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          border-radius: 5px;
+          z-index: 100;
+          font-size: 12px;
+          line-height: 1.2em;
+          max-width: 200px;
+        }
+
+        .d3-tip:after {
+          box-sizing: border-box;
+          display: inline;
+          font-size: 10px;
+          width: 100%;
+          line-height: 1;
+          color: #01a0b6;
+          color: rgba(0, 0, 0, 0.8);
+          content: "\25BC";
+          position: absolute;
+          text-align: center;
+          margin-top: -3px;
+        }
+
+        /* Style northward tooltips differently */
+        .d3-tip.n:after {
+          margin: -3px 0 0 0;
+          top: 100%;
+          left: 0;
+        }
+
+        ul, li {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        a {
+          color: #666;
+          text-decoration: none;
+        }
+
+        .gridline {
+          stroke: #f3f3f3;
+        }
+
+        .offer-key {
+          width: 100%;
+          padding: 20px 20px 10px 20px;
+        }
+        .offer-key li {
+          width: 100%;
+          position: relative;
+          margin-bottom: 10px;
+          font-size: 12px;
+          border-left: solid 7px white;
+          padding-left: 10px;
+        }
+        .offer-key li .title {
+          display: block;
+          margin-bottom: 3px;
+        }
+        .offer-key li .cash {
+          font-weight: 600;
+          font-size: 12px;
+        }
+        .offer-key .bar1 {
+          border-color: #f33501;
+        }
+        .offer-key .bar2 {
+          border-color: #ff761d;
+        }
+        .offer-key .bar3 {
+          border-color: #ff7a55;
+        }
+        .offer-key .bar4 {
+          border-color: #ffb03f;
+        }
+        .offer-key .bar5 {
+          border-color: #f2df3b;
+        }
+        .offer-key .bar6 {
+          border-color: #c4e137;
+        }
+        .offer-key .bar7 {
+          border-color: #83d535;
+        }
+
+        .offer-tip {
+          background: #f33501;
+        }
+
+        .offer-tip:after {
+          color: #f33501;
+        }
+
+        .otip-2 {
+          background: #ff761d;
+        }
+
+        .optip-3 {
+          background: #ff7a55;
+        }
+
+        .otip-4 {
+          background: #ffb03f;
+        }
+
+        .otip-5 {
+          background: #f2df3b;
+        }
+
+        .otip-6 {
+          background: #c4e137;
+        }
+
+        .otip-7 {
+          background: #83d535;
+        }
+
+        .otip-2:after {
+          color: #ff761d;
+        }
+
+        .optip-3:after {
+          color: #ff7a55;
+        }
+
+        .otip-4:after {
+          color: #ffb03f;
+        }
+
+        .otip-5:after {
+          color: #f2df3b;
+        }
+
+        .otip-6:after {
+          color: #c4e137;
+        }
+
+        .otip-7:after {
+          color: #83d535;
+        }
+
+        .chart {
+          width: 310px;
+        }
+        .chart .axis {
+          fill: #666666;
+          stroke: none;
+          font-size: 12px;
+        }
+        .chart .axis path, .chart .axis line {
+          stroke: #cccccc;
+          stroke-width: 0;
+          fill: none;
+        }
+        .chart .x .tick {
+          fill: none;
+        }
+        .chart .fake {
+          fill-opacity: 0.2;
+        }
+        .chart .invis {
+          fill-opacity: 0;
+          display: none;
+        }
+        .chart .bar {
+          cursor: pointer;
+        }
+        .chart .bar1 {
+          fill: #f33501;
+        }
+        .chart .bar2 {
+          fill: #ff761d;
+        }
+        .chart .bar3 {
+          fill: #ff7a55;
+        }
+        .chart .bar4 {
+          fill: #ffb03f;
+        }
+        .chart .bar5 {
+          fill: #f2df3b;
+        }
+        .chart .bar6 {
+          fill: #c4e137;
+        }
+        .chart .bar7 {
+          fill: #83d535;
+        }
+
+
+
+        article {
+            width: 320px;
+            margin: 40px auto;
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: normal;
+            margin: 0 0 20px 0;
+            padding: 0;
+        }
+
+    </style>
+  </head>
+  <body> 
+
+    <article>
+        <h1>Bar Chart</h1>
+        <div class="chart">
+            <svg id="bar-chart"></svg>
+        </div>
+
+        <ul class="offer-key">
+          <li class="bar1">
+              <a class="title" href="#">Thing 1</a>
+          </li>
+          <li class="bar2">
+              <a class="title" href="#">Another Thing</a>
+          </li>
+          <li class="bar3">
+              <a class="title" href="#">Something Something</a>
+          </li>
+          <li class="bar4">
+              <a class="title" href="#">Random Thing</a>
+          </li>
+          <li class="bar5">
+              <a class="title" href="#">The Thing to End All Things</a>
+          </li>
+
+          </ul>
+    </article>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js"></script>
+    <script src="bar2.js"></script>
+    <script>
+    D3Sample.DATA = [
+      ['Thing 1', '2880.00', 'offbeathomelifeonemonthoflove'],            
+      ['Another Thing', '1245.00', 'givesupport'],    
+      ['Something Something', '1045.00', 'somesome'],   
+      ['Random Thing', '645.00', 'random'],           
+      ['The Thing to End All Things', '850.00', 'offbeathomelifeoneyearoflove']        
+    ];
+
+    </script>
+  </body>
+</html>
+
+

@@ -5,23 +5,10 @@ window.D3Sample = window.D3Sample || {};
 
 D3Sample.BarChart = (function(){
 
-    var getDate = function(dateString){
-        var splitDate = dateString.split("-");
-        return new Date(splitDate[0], parseInt(splitDate[1])-1, parseInt(splitDate[2]));
-    };
-
     // test if something is integer
     var isInt = function(n){
         return typeof n== "number" && isFinite(n) && n%1===0;
     }
-
-    /** passed a date string, convert it into a d3 formatted date string
-    */
-    var getDateFormatted = function(dateString ) {
-        var splitDate = dateString.split("-");
-        var format = d3.time.format("%A, %B %e");    
-        return format(getDate(dateString)); // returns a string
-    };
 
     /** format money such that
         large numbers over 1k use magnitude
@@ -46,20 +33,24 @@ D3Sample.BarChart = (function(){
     var makeBarChart = function(){
         var data = D3Sample.DATA;
 
+        // pad data if less than 4 
+        if (data.length < 4) {
+            var diff = 4 - data.length;
+            for (var i=0; i < diff; i++) {
+                data.push(['xxxpadxxx'+i, 0]);
+            }
+        }
+
         var trueWidth = 310;
-        var trueHeight = 160;
-        var margin = {top: 0, right: 0, bottom: 20, left: 30};
+        var trueHeight = 180;
+        var margin = {top: 20, right: 20, bottom: 20, left: 50};
 
         var width = trueWidth - margin.left - margin.right,
             height = trueHeight - margin.top - margin.bottom;
 
-        var barWidth = width/data.length - 1; // how wide we want bar to be
-
-        var minDate = getDate(data[0][0]);
-        var maxDate = getDate(data[data.length-1][0]);
-        var x = d3.time.scale()
-            .domain([minDate, maxDate])
-            .rangeRound([0, width], 0.1);
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], 0.1)
+            .domain(data.map(function(d) {  return d[0]; }));
     
         var maxY = d3.max(data, function(d) { return parseFloat(d[1], 10); });
         if (maxY == 0) { maxY = 1; } // data is all 0 for y
@@ -84,14 +75,10 @@ D3Sample.BarChart = (function(){
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        var formatDate = function(d){
-            return "<strong>$" + parseInt(d[1], 10) + "</strong> in transactions <br /> on "+ getDateFormatted(d[0]);
-        }
-
         var tip = d3.tip()
-            .attr('class', 'd3-tip transaction-tip')
+            .attr('class', 'd3-tip offer-tip')
             .offset([-10, 0])
-            .html(function(d) { return formatDate(d); });
+            .html(function(d, i) { return "<strong>" + d[0] + "</strong><br />$"+ parseInt(d[1], 10) + " total"; });
 
         svg.append("g")
             .attr("class", "x axis")
@@ -104,32 +91,72 @@ D3Sample.BarChart = (function(){
             .append("text")
             .attr("transform", "rotate(-90)");
 
+        // draw y-axis grid lines
+        svg.selectAll("line.y")
+          .data(y.ticks(5))
+          .enter().append("line")
+          .attr("class", "gridline")
+          .attr("x1", 0)
+          .attr("x2", width)
+          .attr("y1", y)
+          .attr("y2", y);
+
         svg.selectAll(".bar")
             .data(data)
             .enter().append("rect")
-            .attr("class", function(d){ 
-                var classString = "bar";
-                if ((d[1] == 0)) { 
-                    classString += " zero";
+            .attr("class", function(d,i){ 
+                var classString = "bar bar" + (i+1);
+                if (!(d[1] > 0)) { 
+                    var testString = d[0].toString();
+                    if (testString.indexOf("xxxpadxxx") > -1) {
+                        classString += " invis";
+                    } else {
+                        classString += " fake";
+                    }
                 }
                 return classString;
             })
+            .attr("data", function(d, i){ return i+1; })
+            .attr("data-name", function(d, i){ return d[2]; })
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide)
-            .attr("x", function(d, i) { 
-                return x(getDate(d[0]));
+            .attr("x", function(d) { 
+                return x(d[0]);
             })
-            .attr("width", barWidth)  
-            .attr("y", function(d) { return y(d[1]); })
-            .attr("height", function(d) { 
-                var h = height - y(d[1]);
-                if (h == 0) {
-                    h = 5; // use 5 height
-                }
-                return h; 
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { 
+                    return y(d[1]); 
+            })
+            .attr("height", function(d) {  
+                if (d[1] > 0) { 
+                    return height - y(d[1]);
+                } else { 
+                    return 5;
+                } 
             });
 
         svg.call(tip);
+
+        // hack to change tip color 
+        var thisTip = $(".offer-tip");
+        var previousTip = '';
+
+        var addTipClass = function(){
+            var currentTip = "otip-"+ $(this).attr("data");
+            $(thisTip).removeClass(previousTip);
+            previousTip = currentTip;
+            $(thisTip).addClass(currentTip);
+        };
+
+        var linkToPeople = function(){
+            var linkname = $(this).data("name");
+            window.location.href = Tugboat.DATA.offer_link + linkname;
+        };
+
+        var allthebars = $("#bar-chart .bar");
+        
+        $(allthebars).mouseover(addTipClass);
+        $(allthebars).click(linkToPeople);
     };
 
     // ----------------- public

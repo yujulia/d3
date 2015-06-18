@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Bar Chart</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+        body {
+            font:  16px/1.4 Helvetica, Arial;
+            color: #666;
+        }
+
+        .d3-tip {
+          line-height: 1;
+          font-weight: normal;
+          padding: 7px 12px;
+          background: #01a0b6;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          border-radius: 5px;
+          z-index: 100;
+          font-size: 12px;
+          line-height: 1.2em;
+          max-width: 200px;
+        }
+
+        .d3-tip:after {
+          box-sizing: border-box;
+          display: inline;
+          font-size: 10px;
+          width: 100%;
+          line-height: 1;
+          color: #01a0b6;
+          color: rgba(0, 0, 0, 0.8);
+          content: "\25BC";
+          position: absolute;
+          text-align: center;
+          margin-top: -3px;
+        }
+
+        /* Style northward tooltips differently */
+        .d3-tip.n:after {
+          margin: -3px 0 0 0;
+          top: 100%;
+          left: 0;
+        }
+
+
+        .chart {
+          font-size: 12px;
+          margin: 0px;
+        }
+        .chart .chart {
+          width: 310px;
+        }
+        .chart .axis {
+          fill: #666666;
+          stroke: none;
+        }
+        .chart .axis path, .chart .axis line {
+          stroke: white;
+          stroke-width: 0;
+          fill: none;
+        }
+        .chart .x .tick {
+          fill: none;
+        }
+        .chart .bar {
+          fill: #3fdaac;
+        }
+        .chart .bar:hover {
+          fill: #3ea687;
+        }
+        .chart .zero {
+          fill-opacity: 0.2;
+        }
+
+        .transaction-tip {
+          background: #3edaab;
+        }
+
+        .transaction-tip:after {
+          color: #3edaab;
+        }
+
+        article {
+            width: 320px;
+            margin: 40px auto;
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+  </head>
+  <body> 
+
+    <article>
+        <h1>30 Day Bar Chart</h1>
+        <div class="chart">
+            <svg id="bar-chart"></svg>
+        </div>
+    </article>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js"></script>
+    <script src="bar.js"></script>
+    <script>
+    D3Sample.DATA = [
+        ['2015-05-19', '0.00'],            
+        ['2015-05-20', '20.00'],            
+        ['2015-05-21', '5.00'],            
+        ['2015-05-22', '5.00'],            
+        ['2015-05-23', '10.00'],            
+        ['2015-05-24', '5.00'],            
+        ['2015-05-25', '5.00'],            
+        ['2015-05-26', '0.00'],            
+        ['2015-05-27', '0.00'],            
+        ['2015-05-28', '5.00'],            
+        ['2015-05-29', '0.00'],            
+        ['2015-05-30', '0.00'],            
+        ['2015-05-31', '3.00'],            
+        ['2015-06-01', '0.00'],            
+        ['2015-06-02', '0.00'],            
+        ['2015-06-03', '0.00'],            
+        ['2015-06-04', '4.00'],            
+        ['2015-06-05', '12.00'],            
+        ['2015-06-06', '5.00'],            
+        ['2015-06-07', '1.00'],            
+        ['2015-06-08', '8.00'],            
+        ['2015-06-09', '23.00'],            
+        ['2015-06-10', '11.00'],            
+        ['2015-06-11', '10.00'],            
+        ['2015-06-12', '6.00'],            
+        ['2015-06-13', '0.00'],            
+        ['2015-06-14', '0.00'],            
+        ['2015-06-15', '0.00'],            
+        ['2015-06-16', '0.00'],            
+        ['2015-06-17', '0.00']        
+    ];
+       
+
+    </script>
+  </body>
+</html>
+
+
